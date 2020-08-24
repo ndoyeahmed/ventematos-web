@@ -1,0 +1,155 @@
+<mat-card>
+  <h1>
+    Gestion des produits
+  </h1>
+  <ol class="breadcrumb text-right">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Accueil</a></li>
+    <li class="active">Produits</li>
+  </ol>
+</mat-card>
+
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-widget no-radius">
+        <div class="box-header">
+          <div class="box-title">
+            <button [routerLink]="'/sales/produit/add'" class="btn btn-primary" color="primary"
+                    mat-raised-button type="button">
+              <em class="fa fa-plus"></em>&nbsp;Ajouter
+            </button>
+          </div>
+          <div class="box-tools">
+            <form #search_form="ngForm" class="form-inline pull-right" name="searchForm">
+              <div class="input-group">
+                <input [(ngModel)]="searchItem" class="form-control no-radius" id="currentSearch" name="currentSearch"
+                       required type="text">
+                <div class="input-group-btn">
+                  <button (click)="search()" [disabled]="!search_form.valid" class="btn btn-default no-radius">
+                    <i class="fa fa-search"></i>
+                  </button>
+                  <button (click)="resetSearch()" [disabled]="!search_form.valid"
+                          class="btn btn-danger margin-r-5 no-radius">
+                    <i class="fa fa-undo"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="box-body">
+          <div class="tabbable">
+            <ul class="nav nav-tabs" id="myTab">
+              <li (click)="loadProduit()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                        href="#archive"> Liste produits</a></li>
+              <li (click)="loadProduitArchived()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                                href="#nonArchive"> Liste produits archivés </a></li>
+            </ul>
+
+            <div class="tab-content">
+              <ngx-spinner [fullScreen]="false" [name]="SPINNER_NAME" size="medium" type="timer"></ngx-spinner>
+              <div class="tab-pane active" id="archive">
+                <div *ngIf="produitList?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                <div class="table-responsive">
+                  <table *ngIf="produitList && produitList.length > 0" aria-describedby="page-heading"
+                         class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Libellé</th>
+                      <th>Description</th>
+                      <th>Catégorie</th>
+                      <th>Quantité</th>
+                      <th>Prix normal</th>
+                      <th>Prix minimal</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      *ngFor="let s of (produitListFilterd && produitListFilterd.length > 0 ? produitListFilterd : produitList)">
+                      <td>{{(produitListFilterd && produitListFilterd.length > 0 ? produitListFilterd : produitList).indexOf(s) + 1}}</td>
+                      <td>{{s.libelle ? s.libelle : ''}}</td>
+                      <td>{{s.description ? s.description : ''}}</td>
+                      <td>{{s.categorie ? s.categorie.libelle ? s.categorie.libelle : '' : ''}}</td>
+                      <td>{{s.quantiteStock ? s.quantiteStock : ''}}</td>
+                      <td>{{s.prixNormal ? s.prixNormal : ''}}</td>
+                      <td>{{s.prixMinimal ? s.prixMinimal : ''}}</td>
+                      <td class="text-center">
+                        <button [routerLink]="'/sales/categorie/edit/' + s.id" class="btn btn-primary"
+                                color="primary" mat-mini-fab
+                                matTooltip="Modifier" type="button">
+                          <em
+                            class="fa fa-edit fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button (click)="onDelete(s)" class="btn btn-danger" color="warn"
+                                data-target="#deleteModal" data-toggle="modal"
+                                mat-mini-fab
+                                matTooltip="Supprimer" type="button">
+                          <em class="fa fa-trash fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="tab-pane" id="nonArchive">
+                <div *ngIf="produitListArchived?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                <div class="table-responsive">
+                  <table *ngIf="produitListArchived && produitListArchived.length > 0" aria-describedby="page-heading"
+                         class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Libellé</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      *ngFor="let s of (produitListFilterd && produitListFilterd.length > 0 ? produitListFilterd : produitListArchived)">
+                      <td>{{(produitListFilterd && produitListFilterd.length > 0 ? produitListFilterd : produitListArchived).indexOf(s) + 1}}</td>
+                      <td>{{s.libelle ? s.libelle : ''}}</td>
+                      <td class="text-center">
+                        <button (click)="restore(s)" class="btn btn-warning" color="primary"
+                                mat-mini-fab matTooltip="Restaurer" type="button">
+                          <em class="fa fa-undo fa-lg"></em></button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-footer"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div aria-hidden="true" aria-labelledby="deleteModal" class="modal fade" id="deleteModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Suppression site</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <strong>Êtes-vous sur de vouloir le supprimé ?</strong>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal" type="button">NON</button>
+        <button (click)="delete()" class="btn btn-danger" data-dismiss="modal" type="button">OUI</button>
+      </div>
+    </div>
+  </div>
+</div>

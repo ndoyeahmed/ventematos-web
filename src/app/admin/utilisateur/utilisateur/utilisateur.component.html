@@ -1,0 +1,182 @@
+<mat-card>
+  <h1>
+    Gestion des utilisateurs
+  </h1>
+  <ol class="breadcrumb text-right">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Accueil</a></li>
+    <li class="active">Utilisateurs</li>
+  </ol>
+</mat-card>
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-widget no-radius">
+        <div class="box-header">
+          <div class="box-title">
+            <button [routerLink]="'/admin/utilisateurs-add'" class="btn btn-primary" color="primary"
+                    mat-raised-button type="button">
+              <em class="fa fa-plus"></em>&nbsp;Ajouter
+            </button>
+          </div>
+          <div class="box-tools">
+            <form #search_form="ngForm" class="form-inline pull-right" name="searchForm">
+              <div class="input-group">
+                <input [(ngModel)]="searchItem" class="form-control no-radius" id="currentSearch" name="currentSearch"
+                       required type="text">
+                <div class="input-group-btn">
+                  <button (click)="search()" [disabled]="!search_form.valid" class="btn btn-default no-radius">
+                    <i class="fa fa-search"></i>
+                  </button>
+                  <button (click)="resetSearch()" [disabled]="!search_form.valid"
+                          class="btn btn-danger margin-r-5 no-radius">
+                    <i class="fa fa-undo"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="box-body">
+          <div class="tabbable">
+            <ul class="nav nav-tabs" id="myTab">
+              <li (click)="loadUtilisateurs()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                      href="#archive"> Liste utilisateurs</a></li>
+              <li (click)="loadUtilisateursArchived()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                              href="#nonArchive"> Liste utilisateurs archivés </a></li>
+            </ul>
+
+            <div class="tab-content">
+              <ngx-spinner [fullScreen]="false" [name]="SPINNER_NAME" size="medium" type="timer"></ngx-spinner>
+              <div class="tab-pane active" id="archive">
+                <div *ngIf="utilisateurs?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                <div class="table-responsive">
+                  <table *ngIf="utilisateurs && utilisateurs.length > 0" aria-describedby="page-heading"
+                         class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Photo</th>
+                      <th>Nom</th>
+                      <th>Prénom</th>
+                      <th>Email</th>
+                      <th>Téléphone</th>
+                      <th>Profil</th>
+                      <th>Statut</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      *ngFor="let m of (utilisateurFiltered && utilisateurFiltered.length > 0 ? utilisateurFiltered : utilisateurs)">
+                      <td>{{(utilisateurFiltered && utilisateurFiltered.length > 0 ? utilisateurFiltered : utilisateurs).indexOf(m) + 1}}</td>
+                      <td class="text-center">
+                        <mat-card>
+                          <img [src]="m.photo ? m.photo : '../../../assets/images/login2.png'"
+                               alt="User Image" mat-card-sm-image>
+                        </mat-card>
+                      </td>
+                      <td>{{m.nom ? m.nom : ''}}</td>
+                      <td>{{m.prenom ? m.prenom : ''}}</td>
+                      <td>{{m.email ? m.email : ''}}</td>
+                      <td>{{m.telephone ? m.telephone : ''}}</td>
+                      <td>{{m.profilUtilisateurs ? m.profilUtilisateurs[0].profil.libelle : ''}}</td>
+                      <td [ngClass]="m.statut ? 'alert alert-success' : 'alert alert-danger'">
+                        {{m.statut ? 'Activé' : 'Désactivé'}}</td>
+                      <td class="text-center">
+                        <mat-slide-toggle (ngModelChange)="!m.statut ? onActive(m) : onDesactive(m)"
+                                          [ngModel]="m.statut" color="primary">
+                          <mat-label [ngClass]="{'text-success': !m.statut, 'text-danger': m.statut }">
+                            {{!m.statut ? 'Activer' : 'Désactiver'}}</mat-label>
+                        </mat-slide-toggle>
+                        &nbsp;&nbsp;&nbsp;
+                        <button [routerLink]="'/admin/utilisateurs-edit/' + m.id" class="btn btn-primary"
+                                color="primary" mat-mini-fab matTooltip="Modifier" type="button">
+                          <em
+                            class="fa fa-edit fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button (click)="onDelete(m)" *ngIf="!m.archive" class="btn btn-danger"
+                                color="warn" data-target="#deleteModal" mat-mini-fab matTooltip="Supprimer"
+                                data-toggle="modal" type="button">
+                          <em class="fa fa-trash fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="tab-pane" id="nonArchive">
+                <div *ngIf="utilisateurArchived?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                <div class="table-responsive">
+                  <table *ngIf="utilisateurArchived && utilisateurArchived.length > 0" aria-describedby="page-heading"
+                         class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Photo</th>
+                      <th>Nom</th>
+                      <th>Prénom</th>
+                      <th>Email</th>
+                      <th>Téléphone</th>
+                      <th>Profil</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      *ngFor="let m of (utilisateurFiltered && utilisateurFiltered.length > 0 ? utilisateurFiltered : utilisateurArchived)">
+                      <td>{{(utilisateurFiltered && utilisateurFiltered.length > 0 ? utilisateurFiltered : utilisateurArchived).indexOf(m) + 1}}</td>
+                      <td class="text-center">
+                        <mat-card>
+                          <img [src]="m.photo ? m.photo : '../../../assets/images/login2.png'"
+                               alt="User Image" mat-card-sm-image>
+                        </mat-card>
+                      </td>
+                      <td>{{m.nom ? m.nom : ''}}</td>
+                      <td>{{m.prenom ? m.prenom : ''}}</td>
+                      <td>{{m.email ? m.email : ''}}</td>
+                      <td>{{m.telephone ? m.telephone : ''}}</td>
+                      <td>{{m.profilUtilisateurs ? m.profilUtilisateurs[0].profil.libelle : ''}}</td>
+                      <td class="text-center">
+                        <button (click)="restore(m)" *ngIf="m.archive" class="btn btn-warning" color="primary"
+                                mat-mini-fab
+                                matTooltip="Restaurer" type="button">
+                          <em class="fa fa-undo fa-lg"></em></button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-footer"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div aria-hidden="true" aria-labelledby="deleteModal" class="modal fade" id="deleteModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Suppression Utilisateur</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <strong>Êtes-vous sur de vouloir le supprimé ?</strong>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal" type="button">NON</button>
+        <button (click)="delete()" class="btn btn-danger" data-dismiss="modal" type="button">OUI</button>
+      </div>
+    </div>
+  </div>
+</div>

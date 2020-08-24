@@ -1,0 +1,57 @@
+<form (ngSubmit)="add()" ngForm>
+  <mat-card>
+    <h1>
+      Ajout catégories
+    </h1>
+    <ol class="breadcrumb text-right">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Accueil</a></li>
+      <li class="active">Catégories</li>
+    </ol>
+  </mat-card>
+
+  <section class="content">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <div class="box box-success">
+
+        <div class="box-header">
+          <div class="box-title">
+            <button [routerLink]="'/sales/categorie'" color="primary" mat-raised-button type="button">
+              <em class="fa fa-list"></em>&nbsp;Liste
+            </button>
+          </div>
+        </div>
+
+        <div class="box-body">
+          <ngx-spinner [fullScreen]="false" [name]="CATEGORIE_ADD_SPINNER" size="medium" type="timer"></ngx-spinner>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <mat-card>
+                <mat-card-content>
+
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Catégorie :</mat-label>
+                        <input [(ngModel)]="categorie.libelle" matInput name="categorie"/>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-md-12">
+                      <button color="primary" mat-raised-button type="submit"><em class="fa fa-save"></em>&nbsp;Enregistrer
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+            </div>
+          </div>
+        </div>
+        <div class="box-footer"></div>
+      </div>
+    </div>
+
+  </section>
+</form>
+

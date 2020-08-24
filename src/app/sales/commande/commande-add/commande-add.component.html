@@ -1,0 +1,160 @@
+<form (ngSubmit)="add()" ngForm>
+  <mat-card>
+    <h1>
+      Ajout commande
+    </h1>
+    <ol class="breadcrumb text-right">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Accueil</a></li>
+      <li class="active">Commandes</li>
+    </ol>
+  </mat-card>
+
+  <section class="content">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <div class="box box-success">
+
+        <div class="box-header">
+          <div class="box-title">
+            <button [routerLink]="'/sales/commande'" color="primary" mat-raised-button type="button">
+              <em class="fa fa-list"></em>&nbsp;Liste commandes
+            </button>
+          </div>
+        </div>
+
+        <div class="box-body">
+          <ngx-spinner [fullScreen]="false" [name]="ADD_SPINNER" size="medium" type="timer"></ngx-spinner>
+          <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+              <mat-card>
+                <mat-card-content>
+
+                  <div class="form-group row">
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-select (selectionChange)="onSelectedClient($event)" [(ngModel)]="client"
+                                    name="client" placeholder="Sélectionnez le client">
+                          <mat-option *ngFor="let c of clientList" [value]="c">{{c.nomComplet}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                      <mat-form-field  class="col-lg-12 col-md-12 col-sm-12 col-xs-12" appearance="fill">
+                        <mat-label>Date de livraison</mat-label>
+                        <input matInput [matDatepicker]="picker">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-select (selectionChange)="onSelectedCategorie($event)" [(ngModel)]="categorie"
+                                    name="categorie" placeholder="Sélectionnez la catégorie">
+                          <mat-option *ngFor="let c of categorieList" [value]="c">{{c.libelle}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-select (selectionChange)="onSelectedProduit($event)" [(ngModel)]="produit"
+                                    name="produit" placeholder="Sélectionnez le produit">
+                          <mat-option *ngFor="let c of produitList" [value]="c">{{c.libelle}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-5">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Quantité :</mat-label>
+                        <input [(ngModel)]="quantite" matInput name="quantite"/>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-md-5">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Prix de vente :</mat-label>
+                        <input [(ngModel)]="prixvente" matInput name="prixvente"/>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                      <button color="primary" class="btn btn-block" mat-raised-button type="button">
+                        Ajouter
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <div class="table-responsive">
+                        <mat-card-subtitle>Produits commandés</mat-card-subtitle>
+                        <table aria-describedby="page-heading"
+                               class="table table-striped">
+                          <thead>
+                          <tr>
+                            <th>N°</th>
+                            <th>Catégorie</th>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Prix unitaire</th>
+                            <th>Total</th>
+                            <th class="text-center">Actions</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <td>1</td>
+                            <td>Ordinateur</td>
+                            <td>Hp 15</td>
+                            <td>20</td>
+                            <td>150000</td>
+                            <td>3000000</td>
+                            <td class="text-center">
+                              <button class="btn btn-danger" color="warn"
+                                      mat-mini-fab
+                                      matTooltip="Supprimer" type="button">
+                                <em class="fa fa-trash fa-lg"></em></button>
+                            </td>
+                          </tr>
+                        <!--  <tr
+                            *ngFor="let s of lineCommandeList">
+                            <td>{{lineCommandeList.indexOf(s) + 1}}</td>
+                            <td>{{s.produit.categorie.libelle}}</td>
+                            <td>{{s.produit.libelle}}</td>
+                            <td>{{s.quantite}}</td>
+                            <td>{{s.prixVenteUnitaire}}</td>
+                            <td>{{s.prixTotal}}</td>
+                            <td class="text-center">
+                              <button class="btn btn-danger" color="warn"
+                                      mat-mini-fab
+                                      matTooltip="Supprimer" type="button">
+                                <em class="fa fa-trash fa-lg"></em></button>
+                            </td>
+                          </tr>-->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row form-group">
+                    <div class="col-md-12">
+                      <button color="primary" mat-raised-button type="submit"><em class="fa fa-save"></em>&nbsp;Enregistrer
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+            </div>
+          </div>
+        </div>
+        <div class="box-footer"></div>
+      </div>
+    </div>
+
+  </section>
+</form>
+

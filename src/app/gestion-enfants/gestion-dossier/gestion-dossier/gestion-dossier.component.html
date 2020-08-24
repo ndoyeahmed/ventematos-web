@@ -1,0 +1,207 @@
+<mat-card>
+  <h1>
+    Gestion des dossiers
+  </h1>
+  <ol class="breadcrumb text-right">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Accueil</a></li>
+    <li class="active">Dossiers enfants</li>
+  </ol>
+</mat-card>
+
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-widget no-radius">
+        <div class="box-header">
+          <div class="box-title">
+            <button [routerLink]="'/gestion-enfant/inscription'" class="btn btn-primary" color="primary"
+                    mat-raised-button type="button">
+              <em class="fa fa-plus"></em>&nbsp;Ajouter
+            </button>
+          </div>
+          <div class="box-tools">
+            <form #search_form="ngForm" class="form-inline pull-right" name="searchForm">
+              <div class="input-group">
+                <input [(ngModel)]="searchItem" class="form-control no-radius" id="currentSearch" name="currentSearch"
+                       required type="text">
+                <div class="input-group-btn">
+                  <button (click)="search()" [disabled]="!search_form.valid" class="btn btn-default no-radius">
+                    <i class="fa fa-search"></i>
+                  </button>
+                  <button (click)="resetSearch()" [disabled]="!search_form.valid"
+                          class="btn btn-danger margin-r-5 no-radius">
+                    <i class="fa fa-undo"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="box-body">
+          <div class="tabbable">
+            <ul class="nav nav-tabs" id="myTab">
+              <li (click)="loadDossier()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                      href="#archive"> <strong>Dossiers</strong></a></li>
+              <li (click)="loadDossierArchived()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                              href="#nonArchive"> <strong>Dossiers archivés</strong>
+              </a></li>
+            </ul>
+
+            <div class="tab-content">
+              <ngx-spinner [fullScreen]="false" [name]="SPINNER_NAME" size="medium" type="timer"></ngx-spinner>
+
+              <div class="tab-pane active" id="archive">
+                <div *ngIf="dossierList?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+
+                <div *ngIf="dossierList && dossierList.length > 0" class="form-group row">
+                  <mat-card *ngFor="let dos of
+                            (dossierListFilterd && dossierListFilterd.length > 0
+                            ? dossierListFilterd : dossierList) | paginate: { id: 'noneArchiveList',
+                                                      itemsPerPage: 10,
+                                                      currentPage: page}"
+                            [routerLink]="'/gestion-enfant/afficher-dossier/' + dos.id"
+                            appMaterialElevation
+                            class="col-md-2 change-cursor"
+                            style="margin: 1%;">
+                    <div class="progress">
+                      <div [ngClass]="(dos.nombreDocFournis*100)/dos.nombreDocAFournir <= 40
+                      ? 'progress-bar progress-bar-danger progress-bar-striped'
+                                      : (dos.nombreDocFournis*100)/dos.nombreDocAFournir > 40 && (dos.nombreDocFournis*100)/dos.nombreDocAFournir <=80
+                                      ? 'progress-bar progress-bar-warning progress-bar-striped'
+                                      : (dos.nombreDocFournis*100)/dos.nombreDocAFournir > 80 && (dos.nombreDocFournis*100)/dos.nombreDocAFournir <= 100
+                                      ? 'progress-bar progress-bar-success progress-bar-striped'
+                                      : 'progress-bar progress-bar-danger progress-bar-striped'"
+                           [style]="'width:' + (dos.nombreDocFournis*100)/dos.nombreDocAFournir + '%'">
+                        {{((dos.nombreDocFournis * 100) / dos.nombreDocAFournir) | number: '1.0-0' }}%
+                      </div>
+                    </div>
+                    <mat-card-header>
+                      <mat-card-subtitle><strong>Dossier N° :</strong> {{dos.code ? dos.code : ''}}</mat-card-subtitle>
+                    </mat-card-header>
+
+                    <mat-card-content>
+                      <div class="form-group row">
+                        <div class="col-md-12 text-center">
+                          <img [src]="dos.enfant ? dos.enfant.photo ? dos.enfant.photo
+                          : '../../../assets/images/login2.png'
+                          : '../../../assets/images/login2.png'" alt="photo profil"
+                               mat-card-lg-image/>
+                        </div>
+                      </div>
+                    </mat-card-content>
+
+                    <mat-card-footer style="padding-left: 10%">
+                      <div class="form-group">
+                        <mat-card-subtitle><strong>Nom
+                          :</strong> {{dos.enfant ? dos.enfant.nom ? dos.enfant.nom : '' : ''}}</mat-card-subtitle>
+
+                        <mat-card-subtitle><strong>Prénom
+                          :</strong> {{dos.enfant ? dos.enfant.prenom ? dos.enfant.prenom : '' : ''}}
+                        </mat-card-subtitle>
+                      </div>
+                    </mat-card-footer>
+                  </mat-card>
+                </div>
+                <div class="form-group row text-center">
+                  <pagination-controls (pageChange)="page = $event" autoHide="true"
+                                       directionLinks="true"
+                                       id="noneArchiveList"
+                                       nextLabel="Suivant"
+                                       previousLabel="Précédent"
+                                       responsive="true"></pagination-controls>
+                </div>
+              </div>
+
+              <div class="tab-pane" id="nonArchive">
+                <div *ngIf="dossierListArchived?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                <div *ngIf="dossierListArchived && dossierListArchived.length > 0" class="form-group row">
+                  <mat-card *ngFor="let dos of
+                            (dossierListFilterd && dossierListFilterd.length > 0
+                            ? dossierListFilterd : dossierListArchived) | paginate: { id: 'archiveList',
+                                                      itemsPerPage: 10,
+                                                      currentPage: page}"
+                            [routerLink]="'/gestion-enfant/afficher-dossier/' + dos.id"
+                            appMaterialElevation
+                            class="col-md-2 change-cursor"
+                            style="margin: 1%;">
+                    <div class="progress">
+                      <div [ngClass]="(dos.nombreDocFournis*100)/dos.nombreDocAFournir <= 40
+                      ? 'progress-bar progress-bar-danger progress-bar-striped'
+                                      : (dos.nombreDocFournis*100)/dos.nombreDocAFournir > 40 && (dos.nombreDocFournis*100)/dos.nombreDocAFournir <=80
+                                      ? 'progress-bar progress-bar-warning progress-bar-striped'
+                                      : (dos.nombreDocFournis*100)/dos.nombreDocAFournir > 80 && (dos.nombreDocFournis*100)/dos.nombreDocAFournir <= 100
+                                      ? 'progress-bar progress-bar-success progress-bar-striped'
+                                      : 'progress-bar progress-bar-danger progress-bar-striped'"
+                           [style]="'width:' + (dos.nombreDocFournis*100)/dos.nombreDocAFournir + '%'">
+                        {{((dos.nombreDocFournis * 100) / dos.nombreDocAFournir) | number: '1.0-0' }}%
+                      </div>
+                    </div>
+                    <mat-card-header>
+                      <mat-card-subtitle><strong>Dossier N° :</strong> {{dos.code ? dos.code : ''}}</mat-card-subtitle>
+                    </mat-card-header>
+
+                    <mat-card-content>
+                      <div class="form-group row">
+                        <div class="col-md-12 text-center">
+                          <img [src]="dos.enfant ? dos.enfant.photo ? dos.enfant.photo
+                          : '../../../assets/images/login2.png'
+                          : '../../../assets/images/login2.png'" alt="photo profil"
+                               mat-card-lg-image/>
+                        </div>
+                      </div>
+                    </mat-card-content>
+
+                    <mat-card-footer style="padding-left: 10%">
+                      <div class="form-group">
+                        <mat-card-subtitle><strong>Nom
+                          :</strong> {{dos.enfant ? dos.enfant.nom ? dos.enfant.nom : '' : ''}}</mat-card-subtitle>
+
+                        <mat-card-subtitle><strong>Prénom
+                          :</strong> {{dos.enfant ? dos.enfant.prenom ? dos.enfant.prenom : '' : ''}}
+                        </mat-card-subtitle>
+                      </div>
+                    </mat-card-footer>
+                  </mat-card>
+                </div>
+                <div class="form-group row text-center">
+                  <pagination-controls (pageChange)="page = $event" autoHide="true"
+                                       directionLinks="true"
+                                       id="archiveList"
+                                       nextLabel="Suivant"
+                                       previousLabel="Précédent"
+                                       responsive="true"></pagination-controls>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="box-footer"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div aria-hidden="true" aria-labelledby="deleteModal" class="modal fade" id="deleteModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Suppression site</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <strong>Êtes-vous sur de vouloir le supprimé ?</strong>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal" type="button">NON</button>
+        <button (click)="delete()" class="btn btn-danger" data-dismiss="modal" type="button">OUI</button>
+      </div>
+    </div>
+  </div>
+</div>

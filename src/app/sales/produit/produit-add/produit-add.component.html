@@ -1,0 +1,120 @@
+<form (ngSubmit)="add()" ngForm>
+  <mat-card>
+    <h1>
+      Ajout Produits
+    </h1>
+    <ol class="breadcrumb text-right">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Accueil</a></li>
+      <li class="active">Produits</li>
+    </ol>
+  </mat-card>
+
+  <section class="content">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <div class="box box-success">
+
+        <div class="box-header">
+          <div class="box-title">
+            <button [routerLink]="'/sales/produit'" color="primary" mat-raised-button type="button">
+              <em class="fa fa-list"></em>&nbsp;Liste
+            </button>
+          </div>
+        </div>
+
+        <div class="box-body">
+          <ngx-spinner [fullScreen]="false" [name]="ADD_SPINNER" size="medium" type="timer"></ngx-spinner>
+          <div class="row">
+            <div class="col-md-12">
+              <mat-card>
+                <mat-card-content>
+                  <div class="form-group row">
+                    <div class="col-md-4">
+                      <img [src]="url ? url : '../../../assets/images/login2.png'" alt="photo profil"
+                           mat-card-lg-image/>
+                      &nbsp;&nbsp;
+
+                      <button color="primary" mat-mini-fab
+                              onclick="document.getElementById('singleFile').click()"
+                              type="button">
+                        <i class="fa fa-edit fa-lg"></i>
+                      </button> &nbsp;&nbsp;
+                      <button (click)="delete()" *ngIf="url" color="accent"
+                              mat-mini-fab type="button"><i
+                        class="fa fa-remove fa-lg"></i></button>
+                    </div>
+                    <div class="col-md-12">
+                      <input (change)="onSelectFile($event)" accept="image/png, image/jpeg" id="singleFile"
+                             name="photoprofil"
+                             style="display:none;" type="file"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-select (selectionChange)="onSelectedCategorie($event)" [(ngModel)]="categorie"
+                                     name="categorie" placeholder="Sélectionnez la catégorie">
+                          <mat-option *ngFor="let c of categorieList" [value]="c">{{c.libelle}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Produit :</mat-label>
+                        <input [(ngModel)]="produit.libelle" matInput name="produit_libelle"/>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Prix normal :</mat-label>
+                        <input [(ngModel)]="produit.prixNormal" matInput name="prixnormal"/>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Prix minimal :</mat-label>
+                        <input [(ngModel)]="produit.prixMinimal" matInput name="prixminimal"/>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Quantité en stock :</mat-label>
+                        <input [(ngModel)]="produit.quantiteStock" matInput name="quantitéstock"/>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Description :</mat-label>
+                        <textarea [(ngModel)]="produit.description" cols="12" matInput
+                                  name="description" rows="3"></textarea>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="row form-group">
+                    <div class="col-md-12">
+                      <button color="primary" mat-raised-button type="submit"><em class="fa fa-save"></em>&nbsp;Enregistrer
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+            </div>
+          </div>
+        </div>
+        <div class="box-footer"></div>
+      </div>
+    </div>
+
+  </section>
+</form>
+

@@ -1,0 +1,30 @@
+<div class="wrapper fadeInDown" style="margin-top: 5%">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+
+    <!-- Icon -->
+    <div class="fadeIn first">
+      <img alt="User Icon" id="icon" src="../../../assets/images/log1.jpg"/>
+    </div>
+
+    <!-- Login Form -->
+    <form [formGroup]="form">
+      <h3 class="text-danger"><strong>{{err}}</strong></h3>
+      <input class="fadeIn second" formControlName="login" id="login" name="login" placeholder="login" required
+             type="text">
+      <input class="fadeIn third" formControlName="password" id="password" name="password" placeholder="password"
+             required type="password">
+      <input (click)="login()" class="fadeIn fourth" type="button" value="Log In">
+      <mat-progress-spinner *ngIf="progressbar"
+                            color="primary" diameter="30"
+                            mode="indeterminate" strokeWidth="20" style="margin-left: 45%">
+      </mat-progress-spinner>
+    </form>
+
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <a class="underlineHover" href="#">Forgot Password?</a>
+    </div>
+
+  </div>
+</div>

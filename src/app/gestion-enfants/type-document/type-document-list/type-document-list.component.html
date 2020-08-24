@@ -1,0 +1,142 @@
+<mat-card>
+  <h1>
+    Gestion des types de document
+  </h1>
+  <ol class="breadcrumb text-right">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Accueil</a></li>
+    <li class="active">Type document</li>
+  </ol>
+</mat-card>
+<section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-widget no-radius">
+        <div class="box-header">
+          <div class="box-title">
+            <button [routerLink]="'/gestion-enfant/type-document/add'" color="primary" mat-raised-button type="button">
+              <em class="fa fa-plus"></em>&nbsp;Ajouter
+            </button>
+          </div>
+          <div class="box-tools">
+            <form #search_form="ngForm" class="form-inline pull-right" name="searchForm">
+              <div class="input-group">
+                <input [(ngModel)]="searchItem" class="form-control no-radius" id="currentSearch" name="currentSearch"
+                       required type="text">
+                <div class="input-group-btn">
+                  <button (click)="search()" [disabled]="!search_form.valid" class="btn btn-default no-radius">
+                    <i class="fa fa-search"></i>
+                  </button>
+                  <button (click)="resetSearch()" [disabled]="!search_form.valid"
+                          class="btn btn-danger margin-r-5 no-radius">
+                    <i class="fa fa-undo"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="box-body">
+          <div class="tabbable">
+            <ul class="nav nav-tabs" id="myTab">
+              <li (click)="loadTypeDocument()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                           href="#archive"> Liste types de document</a></li>
+              <li (click)="loadTypeDocumentArchived()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                                   href="#nonArchive"> Liste types de document archivés </a></li>
+            </ul>
+
+            <div class="tab-content">
+              <ngx-spinner [fullScreen]="false" [name]="SPINNER_NAME" size="medium" type="timer"></ngx-spinner>
+              <div class="tab-pane active" id="archive">
+                <div *ngIf="typeDocumentList?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                <div class="table-responsive">
+                  <table *ngIf="typeDocumentList && typeDocumentList.length > 0" aria-describedby="page-heading"
+                         class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Libellé</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      *ngFor="let typeDoc of (typeDocumentListFilterd && typeDocumentListFilterd.length > 0 ? typeDocumentListFilterd : typeDocumentList)">
+                      <td>{{(typeDocumentListFilterd && typeDocumentListFilterd.length > 0 ? typeDocumentListFilterd : typeDocumentList).indexOf(typeDoc) + 1}}</td>
+                      <td>{{typeDoc.libelle ? typeDoc.libelle : ''}}</td>
+                      <td class="text-center">
+                        <button [routerLink]="'/gestion-enfant/type-document/edit/' + typeDoc.id" color="primary"
+                                mat-mini-fab matTooltip="Modifier" type="button">
+                          <em
+                            class="fa fa-edit fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button (click)="onDelete(typeDoc)" *ngIf="!typeDoc.archive" class="btn btn-danger" color="warn"
+                                data-target="#deleteModal"
+                                mat-mini-fab matTooltip="Supprimer"
+                                data-toggle="modal" type="button">
+                          <em class="fa fa-trash fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="tab-pane" id="nonArchive">
+                <div *ngIf="typeDocumentListArchived?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                <div class="table-responsive">
+                  <table *ngIf="typeDocumentListArchived && typeDocumentListArchived.length > 0" aria-describedby="page-heading"
+                         class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Libellé</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      *ngFor="let typeDoc of (typeDocumentListFilterd && typeDocumentListFilterd.length > 0 ? typeDocumentListFilterd : typeDocumentListArchived)">
+                      <td>{{(typeDocumentListFilterd && typeDocumentListFilterd.length > 0 ? typeDocumentListFilterd : typeDocumentListArchived).indexOf(typeDoc) + 1}}</td>
+                      <td>{{typeDoc.libelle ? typeDoc.libelle : ''}}</td>
+                      <td class="text-center">
+                        <button (click)="restore(typeDoc)" *ngIf="typeDoc.archive" class="btn btn-warning"
+                                color="primary" mat-mini-fab matTooltip="Restaurer" type="button">
+                          <em class="fa fa-undo fa-lg"></em></button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box-footer"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div aria-hidden="true" aria-labelledby="deleteModal" class="modal fade" id="deleteModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Suppression type document</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <strong>Êtes-vous sur de vouloir le supprimé ?</strong>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal" type="button">NON</button>
+        <button (click)="delete()" class="btn btn-danger" data-dismiss="modal" type="button">OUI</button>
+      </div>
+    </div>
+  </div>
+</div>
