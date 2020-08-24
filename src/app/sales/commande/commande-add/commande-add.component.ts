@@ -7,6 +7,9 @@ import {LineCommandeModel} from '../../../shared/models/sales/line-commande.mode
 import {ProduitService} from '../../services/produit.service';
 import {CommandeService} from '../../services/commande.service';
 import {Subscription} from 'rxjs';
+import {CommandeModel} from '../../../shared/models/sales/commande.model';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {MyToastrService} from '../../../shared/my-toastr/my-toastr.service';
 
 @Component({
   selector: 'app-commande-add',
@@ -25,8 +28,12 @@ export class CommandeAddComponent implements OnInit, OnDestroy {
   categorie = new CategorieModel();
   lineCommandeList = [] as LineCommandeModel[];
   subscription = [] as Subscription[];
+  dateLivraison: any;
+  prixVenteInIntervalle = false;
 
   constructor(
+    private spinner: NgxSpinnerService,
+    private toast: MyToastrService,
     private produitsService: ProduitService,
     private commandeService: CommandeService
   ) { }
@@ -36,12 +43,13 @@ export class CommandeAddComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
+    this.spinner.show(this.ADD_SPINNER);
     this.loadCategorie();
     this.loadClientList();
   }
 
   loadClientList() {
-    this.subscription.push(this.commandeService.clientList().subscribe(
+    this.subscription.push(this.commandeService.clientList(false).subscribe(
       (data) => this.clientList = data
     ));
   }
@@ -50,7 +58,8 @@ export class CommandeAddComponent implements OnInit, OnDestroy {
     this.subscription.push(
       this.produitsService.categorieList().subscribe(
         (data) => this.categorieList = data,
-        (error) => console.log(error)
+        (error) => console.log(error),
+        () => this.spinner.hide(this.ADD_SPINNER)
       )
     );
   }
@@ -64,7 +73,20 @@ export class CommandeAddComponent implements OnInit, OnDestroy {
   }
 
   add() {
-    // TODO
+    let lineCommande = this.lineCommandeList.filter(lc =>
+    lc.produit.id === this.produit.id)[0];
+    if (lineCommande) {
+      lineCommande.quantite = Number(lineCommande.quantite) + Number(this.quantite);
+    } else {
+      lineCommande = new LineCommandeModel();
+      lineCommande.quantite = Number(this.quantite);
+      lineCommande.produit = this.produit;
+      lineCommande.prixVenteUnitaire = this.prixvente;
+      lineCommande.prixTotal = Number(this.quantite) * Number(this.prixvente);
+      this.lineCommandeList.push(lineCommande);
+    }
+    this.quantite = 0;
+    this.prixvente = 0;
   }
 
   onSelectedClient($event: MatSelectChange) {
@@ -78,5 +100,60 @@ export class CommandeAddComponent implements OnInit, OnDestroy {
   onSelectedCategorie($event: MatSelectChange) {
     this.categorie = $event.value as CategorieModel;
     this.loadProduit(this.categorie.id);
+  }
+
+  save() {
+    this.spinner.show(this.ADD_SPINNER);
+    const commande = new CommandeModel();
+    commande.dateLivraison = this.dateLivraison;
+    commande.client = this.client;
+    this.lineCommandeList.forEach(lc => lc.commande = commande);
+
+    this.subscription.push(
+      this.commandeService.saveCommande(this.lineCommandeList).subscribe(
+        (data) => {
+          this.toast.success();
+        }, (error) => {
+          this.toast.error();
+          this.spinner.hide(this.ADD_SPINNER);
+        }, () => {
+          this.clearAll();
+          this.spinner.hide(this.ADD_SPINNER);
+        }
+      )
+    );
+  }
+
+  deleteRow(id: number) {
+    this.prixVenteInIntervalle = false;
+    this.lineCommandeList.forEach(lc => {
+      if (lc.produit.id === id) {
+        this.lineCommandeList.splice(this.lineCommandeList.indexOf(lc), 1);
+      }
+    });
+  }
+
+  clearAll() {
+    this.client = new ClientModel();
+    this.categorie = new CategorieModel();
+    this.produit = new ProduitModel();
+    this.quantite = 0;
+    this.prixvente = 0;
+    this.lineCommandeList = [];
+    this.dateLivraison = null;
+    this.prixVenteInIntervalle = false;
+  }
+
+  onVerifyPrixVente($event) {
+    if (this.produit && this.produit.id) {
+      if (Number(this.prixvente) < Number(this.produit.prixMinimal)) {
+        this.toast.warning('prix de vente inférieur au prix minimal');
+        this.prixVenteInIntervalle = false;
+      } else {
+        this.prixVenteInIntervalle = true;
+      }
+    } else {
+      this.toast.warning('Veuillez sélectionner un produit');
+    }
   }
 }

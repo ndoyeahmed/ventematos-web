@@ -1,0 +1,129 @@
+<form (ngSubmit)="add()" ngForm>
+  <mat-card>
+    <h1>
+      Effectuer paiement
+    </h1>
+    <ol class="breadcrumb text-right">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Accueil</a></li>
+      <li class="active">Paiements</li>
+    </ol>
+  </mat-card>
+
+  <section class="content">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <div class="box box-success">
+
+        <div class="box-header">
+          <div class="box-title">
+            <button [routerLink]="'/sales/paiement'" color="primary" mat-raised-button type="button">
+              <em class="fa fa-list"></em>&nbsp;Liste paiements
+            </button>
+          </div>
+        </div>
+
+        <div class="box-body">
+          <ngx-spinner [fullScreen]="false" [name]="ADD_SPINNER" size="medium" type="timer"></ngx-spinner>
+          <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+              <mat-card>
+                <mat-card-content>
+
+                  <div class="form-group row">
+                    <div class="col-md-10">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Numéro facture :</mat-label>
+                        <input [(ngModel)]="numeroFacture" matInput name="numerofacture"/>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-md-2">
+                      <button color="primary" mat-fab type="button">
+                        <em class="fa fa-search fa-lg"></em>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Montant total payé :</mat-label>
+                        <input disabled [(ngModel)]="numeroFacture" matInput name="montantdejapaye"/>
+                      </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Montant total restant :</mat-label>
+                        <input disabled [(ngModel)]="numeroFacture" matInput name="montantrestant"/>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-12">
+                      <div class="table-responsive">
+                        <div class="text-center">
+                          <mat-card-subtitle>Paiments effectués</mat-card-subtitle>
+                        </div>
+                        <table aria-describedby="page-heading"
+                               class="table table-striped">
+                          <thead>
+                          <tr>
+                            <th>N°</th>
+                            <th>Date</th>
+                            <th>Montant</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <td>1</td>
+                            <td>26/02/2020</td>
+                            <td>3000000</td>
+                          </tr>
+                          <!--  <tr
+                              *ngFor="let s of lineCommandeList">
+                              <td>{{lineCommandeList.indexOf(s) + 1}}</td>
+                              <td>{{s.produit.categorie.libelle}}</td>
+                              <td>{{s.produit.libelle}}</td>
+                              <td>{{s.quantite}}</td>
+                              <td>{{s.prixVenteUnitaire}}</td>
+                              <td>{{s.prixTotal}}</td>
+                              <td class="text-center">
+                                <button class="btn btn-danger" color="warn"
+                                        mat-mini-fab
+                                        matTooltip="Supprimer" type="button">
+                                  <em class="fa fa-trash fa-lg"></em></button>
+                              </td>
+                            </tr>-->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-6">
+                      <mat-form-field class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <mat-label>Montant :</mat-label>
+                        <input [(ngModel)]="numeroFacture" matInput name="montant"/>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div class="row form-group">
+                    <div class="col-md-12">
+                      <button color="primary" mat-raised-button type="submit"><em class="fa fa-save"></em>&nbsp;Enregistrer
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+            </div>
+          </div>
+        </div>
+        <div class="box-footer"></div>
+      </div>
+    </div>
+
+  </section>
+</form>
+

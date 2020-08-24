@@ -12,10 +12,18 @@ export class CommandeService {
   constructor(private http: HttpClient) { }
 
   saveCommande(commande: any): Observable<any> {
-    return this.http.post(this.api + '', commande);
+    return this.http.post(this.api + 'commandes', commande);
   }
 
-  clientList(): Observable<any> {
-    return this.http.get(this.api + '');
+  commandeList(archive: boolean, statut: number): Observable<any> {
+    return this.http.get(this.api + 'commandes/archive/' + archive + '/statut/' + statut);
+  }
+
+  lineCommandeListByCommande(commandeId: number): Observable<any> {
+    return this.http.get(this.api + 'commandes/linecommande/' + commandeId);
+  }
+
+  clientList(archive: boolean): Observable<any> {
+    return this.http.get(this.api + 'clients/archive/' + archive);
   }
 }

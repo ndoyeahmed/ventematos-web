@@ -24,6 +24,10 @@ export class ProduitService {
   }
 
   produitListByCategorie(categorieId: number): Observable<any> {
-    return this.http.get(this.api + '');
+    return this.http.get(this.api + 'produits/categorie/' + categorieId);
+  }
+
+  produitsList(archive: boolean): Observable<any> {
+    return this.http.get(this.api + 'produits/archive/' + archive);
   }
 }

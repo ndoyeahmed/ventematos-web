@@ -40,8 +40,10 @@
         <div class="box-body">
           <div class="tabbable">
             <ul class="nav nav-tabs" id="myTab">
-              <li (click)="loadCommande()" class=""><a class="btn btn-success" data-toggle="tab"
-                                                      href="#archive"> Liste Commandes</a></li>
+              <li (click)="loadCommandeEnCours()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                      href="#archive"> Liste commandes en cours</a></li>
+              <li (click)="loadCommandeValider()" class=""><a class="btn btn-success" data-toggle="tab"
+                                                              href="#valide"> Liste commandes validées</a></li>
               <li (click)="loadCommandeArchived()" class=""><a class="btn btn-success" data-toggle="tab"
                                                               href="#nonArchive"> Liste Commandes archivées </a></li>
             </ul>
@@ -64,11 +66,104 @@
                       <th>Date Livraison</th>
                       <th>Détails</th>
                       <th>Factures</th>
-                      <th>Etat</th>
                       <th class="text-center">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
+                    <tr
+                      *ngFor="let s of (commandeListFilterd && commandeListFilterd.length > 0 ? commandeListFilterd : commandeList)">
+                      <td>{{(commandeListFilterd && commandeListFilterd.length > 0 ? commandeListFilterd : commandeList).indexOf(s) + 1}}</td>
+                      <td>{{s.code ? s.code : ''}}</td>
+                      <td>{{s.client ? s.client.nomComplet ? s.client.nomComplet : '' : ''}}</td>
+                      <td>{{s.dateCommande ? s.dateCommande : '' | date: 'MMM d, y'}}</td>
+                      <td>{{s.dateLivraison ? s.dateLivraison : '' | date: 'MMM d, y'}}</td>
+                      <td>
+                        <button (click)="onShowDetails(s.id)" class="btn btn-default" color="primary"
+                                data-target="#detailsModal" data-toggle="modal"
+                                mat-mini-fab
+                                matTooltip="Détails" type="button">
+                          <em class="fa fa-list fa-lg"></em></button>
+                      </td>
+                      <td>
+                        <button (click)="onShowFacture(s.id)" class="btn btn-default" color="primary"
+                                mat-mini-fab
+                                matTooltip="Voir facture" type="button">
+                          <em class="fa fa-print fa-lg"></em></button>
+                      </td>
+                      <td class="text-center">
+                        <button [routerLink]="'/sales/categorie/edit/' + s.id" class="btn btn-primary"
+                                color="primary" mat-mini-fab
+                                matTooltip="Modifier" type="button">
+                          <em
+                            class="fa fa-edit fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button (click)="onDelete(s)" class="btn btn-danger" color="warn"
+                                data-target="#deleteModal" data-toggle="modal"
+                                mat-mini-fab
+                                matTooltip="Supprimer" type="button">
+                          <em class="fa fa-trash fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="tab-pane" id="valide">
+                <div *ngIf="commandeListValid?.length === 0" class="alert alert-warning no-radius">
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                <div class="table-responsive">
+                  <table *ngIf="commandeListValid && commandeListValid.length > 0" aria-describedby="page-heading"
+                         class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Code</th>
+                      <th>Client</th>
+                      <th>Date commande</th>
+                      <th>Date Livraison</th>
+                      <th>Détails</th>
+                      <th>Factures</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                      *ngFor="let s of (commandeListFilterd && commandeListFilterd.length > 0 ? commandeListFilterd : commandeListValid)">
+                      <td>{{(commandeListFilterd && commandeListFilterd.length > 0 ? commandeListFilterd : commandeListValid).indexOf(s) + 1}}</td>
+                      <td>{{s.code ? s.code : ''}}</td>
+                      <td>{{s.client ? s.client.nomComplet ? s.client.nomComplet : '' : ''}}</td>
+                      <td>{{s.dateCommande ? s.dateCommande : '' | date: 'MMM d, y'}}</td>
+                      <td>{{s.dateLivraison ? s.dateLivraison : '' | date: 'MMM d, y'}}</td>
+                      <td>
+                        <button (click)="onShowDetails(s.id)" class="btn btn-default" color="primary"
+                                data-target="#detailsModal" data-toggle="modal"
+                                mat-mini-fab
+                                matTooltip="Détails" type="button">
+                          <em class="fa fa-list fa-lg"></em></button>
+                      </td>
+                      <td>
+                        <button (click)="onShowFacture(s.id)" class="btn btn-default" color="primary"
+                                mat-mini-fab
+                                matTooltip="Voir facture" type="button">
+                          <em class="fa fa-print fa-lg"></em></button>
+                      </td>
+                      <td class="text-center">
+                        <button [routerLink]="'/sales/categorie/edit/' + s.id" class="btn btn-primary"
+                                color="primary" mat-mini-fab
+                                matTooltip="Modifier" type="button">
+                          <em
+                            class="fa fa-edit fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button (click)="onDelete(s)" class="btn btn-danger" color="warn"
+                                data-target="#deleteModal" data-toggle="modal"
+                                mat-mini-fab
+                                matTooltip="Supprimer" type="button">
+                          <em class="fa fa-trash fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
                     </tbody>
                   </table>
                 </div>
@@ -83,11 +178,51 @@
                     <thead>
                     <tr>
                       <th>N°</th>
-                      <th>Libellé</th>
+                      <th>Code</th>
+                      <th>Client</th>
+                      <th>Date commande</th>
+                      <th>Date Livraison</th>
+                      <th>Détails</th>
+                      <th>Factures</th>
                       <th class="text-center">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
+                    <tr
+                      *ngFor="let s of (commandeListFilterd && commandeListFilterd.length > 0 ? commandeListFilterd : commandeListArchived)">
+                      <td>{{(commandeListFilterd && commandeListFilterd.length > 0 ? commandeListFilterd : commandeListArchived).indexOf(s) + 1}}</td>
+                      <td>{{s.code ? s.code : ''}}</td>
+                      <td>{{s.client ? s.client.nomComplet ? s.client.nomComplet : '' : ''}}</td>
+                      <td>{{s.dateCommande ? s.dateCommande : '' | date: 'MMM d, y'}}</td>
+                      <td>{{s.dateLivraison ? s.dateLivraison : '' | date: 'MMM d, y'}}</td>
+                      <td>
+                        <button (click)="onShowDetails(s.id)" class="btn btn-default" color="primary"
+                                data-target="#detailsModal" data-toggle="modal"
+                                mat-mini-fab
+                                matTooltip="Détails" type="button">
+                          <em class="fa fa-list fa-lg"></em></button>
+                      </td>
+                      <td>
+                        <button (click)="onShowFacture(s.id)" class="btn btn-default" color="primary"
+                                mat-mini-fab
+                                matTooltip="Voir facture" type="button">
+                          <em class="fa fa-print fa-lg"></em></button>
+                      </td>
+                      <td class="text-center">
+                        <button [routerLink]="'/sales/categorie/edit/' + s.id" class="btn btn-primary"
+                                color="primary" mat-mini-fab
+                                matTooltip="Modifier" type="button">
+                          <em
+                            class="fa fa-edit fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                        <button (click)="onDelete(s)" class="btn btn-danger" color="warn"
+                                data-target="#deleteModal" data-toggle="modal"
+                                mat-mini-fab
+                                matTooltip="Supprimer" type="button">
+                          <em class="fa fa-trash fa-lg"></em></button>
+                        &nbsp;&nbsp;&nbsp;
+                      </td>
+                    </tr>
                     </tbody>
                   </table>
                 </div>
@@ -105,7 +240,7 @@
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Suppression site</h5>
+        <h5 class="modal-title" id="deleteModalLabel">Suppression commande</h5>
         <button aria-label="Close" class="close" data-dismiss="modal" type="button">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -116,6 +251,53 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" data-dismiss="modal" type="button">NON</button>
         <button (click)="delete()" class="btn btn-danger" data-dismiss="modal" type="button">OUI</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div aria-hidden="true" aria-labelledby="deleteModal" class="modal fade" id="detailsModal" role="dialog" tabindex="-1">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel">Détails commande</h5>
+        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <div class="table-responsive">
+            <mat-card-subtitle>Produits commandés</mat-card-subtitle>
+            <table aria-describedby="page-heading"
+                   class="table table-striped">
+              <thead>
+              <tr>
+                <th>N°</th>
+                <th>Catégorie</th>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Total</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                *ngFor="let s of lineCommandeList">
+                <td>{{lineCommandeList.indexOf(s) + 1}}</td>
+                <td>{{s.produit.categorie.libelle}}</td>
+                <td>{{s.produit.libelle}}</td>
+                <td>{{s.quantite}}</td>
+                <td>{{s.prixVenteUnitaire}}</td>
+                <td>{{s.prixTotal}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" type="button">Fermer</button>
       </div>
     </div>
   </div>
